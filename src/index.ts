@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, IntentsBitField, TextChannel } from 'discord.js'
+import { Client, GatewayIntentBits } from 'discord.js'
 import { config } from 'dotenv'
 config()
 
