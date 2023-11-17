@@ -18,6 +18,7 @@ const butlers: Record<string, Butler> = {}
 client.on('ready', () => {
   console.log('Bot is ready')
   client.guilds.cache.forEach(guild => {
+    console.log(`Guild: ${guild.name}`);
     butlers[guild.id] = new Butler(client, guild.id)
   })
 })
