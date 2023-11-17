@@ -27,34 +27,32 @@ class TemplateString {
   }
 
   static removeKeywordModifyer(template: string): string {
-    const mods = template.match(/:<(.*)>/g) || []
+    const mods = TemplateString.getToBeDeletedSubstring(template)
     mods.forEach(mod => {
-      template = template.replace(mod, "")
+      template = template.replace(`:<${mod}>`, "")
     })
     return template
   }
 
   static getKeywords(template: string): string[] {
-    const regex = /{([A-Z_]+)}|{([A-Z_]+):<(.*)>}/g
-    const keywords = (template.match(regex) || []).map(keyword => {
-      const toBeDeleted = keyword.match(/<(.*)>/)?.[0] || ""
-      if (!toBeDeleted) {
-        return keyword
-      }
-      return keyword.replace(toBeDeleted, "").replace(":", "")
-    })
-    const uniqueKeywords = [...new Set(keywords)].map(keyword => keyword.slice(1, -1)) // remove the curly braces
-    return uniqueKeywords
+    const noModTemplate = TemplateString.removeKeywordModifyer(template)
+    const regex = /{([A-Z_]+)}/g
+    const keywords = noModTemplate.match(regex) || []
+    const uniqueKeywords = [...new Set(keywords)]
+    return uniqueKeywords.map(keyword => keyword.slice(1, keyword.length - 1))
   }
 
   static getToBeDeletedSubstring(template: string): string[] {
-    const regex = /{([A-Z_]+):<(.*)>}/g
-    const keywords = (template.match(regex) || []).map(keyword => {
-      const toBeDeleted = keyword.match(/<(.*)>/)?.[0] || ""
-      return toBeDeleted.slice(1, -1)
+    const regex = /{([A-Z_]+):<(.*)[\r\n]?>}/g
+    const keywords = template.match(regex) || []
+    const toBeDeleted: string[] = []
+    keywords.forEach(keyword => {
+      const mod = keyword.match(/:<(.*)[\r\n]?>/g)
+      if (!mod) return
+      if (toBeDeleted.includes(mod[0])) return
+      toBeDeleted.push(mod[0])
     })
-    const uniqueKeywords = [...new Set(keywords)]
-    return uniqueKeywords
+    return toBeDeleted.map(m => m.slice(2, m.length - 1))
   }
 
   static verifyTemplate(template: string): boolean {
@@ -74,8 +72,6 @@ class TemplateString {
       case "SOURCE_MESSAGE_CONTENT":
         return (payload as MessageCreatePayload).message.content
       case "SOURCE_MEMBER_ID":
-        console.log(payload.sourceMember.user.id);
-
         return payload.sourceMember.user.id
       default:
         throw new Error(`Unknown keyword: ${keyword}`)
