@@ -1,3 +1,4 @@
+import { log } from "console";
 import { AvailableTemplateKeyword } from ".";
 import { BasePayload, MemberJoinVoiceChannelPayload, MessageCreatePayload } from "../payloads";
 
@@ -6,25 +7,53 @@ class TemplateString {
   public template: string;
   constructor(template: string) {
     if (!TemplateString.verifyTemplate(template)) {
-      throw new Error("Invalid template string")
+      throw new Error(`Invalid template string: ` + template)
     }
     this.template = template;
   }
   format(payload: BasePayload) {
     const keywords = TemplateString.getKeywords(this.template)
     let values: Record<string, string> = {}
-    let formattedString = this.template
+    let formattedString = TemplateString.removeKeywordModifyer(this.template)
     keywords.forEach(keyword => {
       values[keyword] = TemplateString.getValueOfKeyword(keyword as keyof AvailableTemplateKeyword, payload as MemberJoinVoiceChannelPayload | MessageCreatePayload)
       formattedString = formattedString.replace(`{${keyword}}`, values[keyword])
     })
+    const toBeDeletedSubstring = TemplateString.getToBeDeletedSubstring(this.template)
+    toBeDeletedSubstring.forEach(substring => {
+      formattedString = formattedString.replace(substring, "")
+    })
     return formattedString
   }
 
+  static removeKeywordModifyer(template: string): string {
+    const mods = template.match(/:<(.*)>/g) || []
+    mods.forEach(mod => {
+      template = template.replace(mod, "")
+    })
+    return template
+  }
+
   static getKeywords(template: string): string[] {
-    const regex = /{([A-Z_]+)}/g // match all the uppercase words between curly braces
-    const keywords = template.match(regex) || []
+    const regex = /{([A-Z_]+)}|{([A-Z_]+):<(.*)>}/g
+    const keywords = (template.match(regex) || []).map(keyword => {
+      const toBeDeleted = keyword.match(/<(.*)>/)?.[0] || ""
+      if (!toBeDeleted) {
+        return keyword
+      }
+      return keyword.replace(toBeDeleted, "").replace(":", "")
+    })
     const uniqueKeywords = [...new Set(keywords)].map(keyword => keyword.slice(1, -1)) // remove the curly braces
+    return uniqueKeywords
+  }
+
+  static getToBeDeletedSubstring(template: string): string[] {
+    const regex = /{([A-Z_]+):<(.*)>}/g
+    const keywords = (template.match(regex) || []).map(keyword => {
+      const toBeDeleted = keyword.match(/<(.*)>/)?.[0] || ""
+      return toBeDeleted.slice(1, -1)
+    })
+    const uniqueKeywords = [...new Set(keywords)]
     return uniqueKeywords
   }
 
