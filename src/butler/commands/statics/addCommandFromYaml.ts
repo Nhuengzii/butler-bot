@@ -12,10 +12,13 @@ class AddCommandFromYamlCommand extends ButlerCommand {
     const actions = [
       new StartWithsActionController(
         TemplateString.fromTemplateKeyword("SOURCE_MESSAGE_CONTENT"),
-        new TemplateString("--add-command\n")
+        new TemplateString(`--add-command
+\`\`\`yaml
+`)
       ),
       new AddCommandFromYamlAction(
-        TemplateString.fromTemplateKeyword("SOURCE_MESSAGE_CONTENT")
+        new TemplateString(`{SOURCE_MESSAGE_CONTENT:<--add-command
+>}`)
       ),
       new SendTextMessageToTextChannelAction(
         TemplateString.fromTemplateKeyword("SOURCE_MESSAGE_TC_ID"),
