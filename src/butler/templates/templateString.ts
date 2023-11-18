@@ -1,6 +1,6 @@
 import { log } from "console";
 import { AvailableTemplateKeyword } from ".";
-import { BasePayload, MemberJoinVoiceChannelPayload, MessageCreatePayload } from "../payloads";
+import { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads";
 
 
 class TemplateString {
@@ -75,6 +75,8 @@ class TemplateString {
         return (payload as MessageCreatePayload).message.content
       case "SOURCE_MEMBER_ID":
         return payload.sourceMember.user.id
+      case "SOURCE_SPEECH_CONTENT":
+        return (payload as MemberSpeakPayload).speech
       default:
         throw new Error(`Unknown keyword: ${keyword}`)
     }
@@ -87,7 +89,9 @@ class TemplateString {
     "SOURCE_MESSAGE_TC_ID",
     "SOURCE_MEMBER_USERNAME",
     "SOURCE_MESSAGE_CONTENT",
-    "SOURCE_MEMBER_ID"
+    "SOURCE_MEMBER_ID",
+    "SOURCE_MEMBER_NAME",
+    "SOURCE_SPEECH_CONTENT"
   ]
 }
 export { TemplateString }

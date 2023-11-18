@@ -1,4 +1,4 @@
-import { MemberJoinVoiceChannelPayload, MessageCreatePayload } from "../payloads"
+import { MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads"
 
 interface AvailableTemplateKeyword {
   SOURCE_MEMBER_VC_ID: MemberJoinVoiceChannelPayload | MessageCreatePayload,
@@ -7,6 +7,7 @@ interface AvailableTemplateKeyword {
   SOURCE_MEMBER_USERNAME: MemberJoinVoiceChannelPayload | MessageCreatePayload | MemberJoinVoiceChannelPayload | MemberJoinVoiceChannelPayload,
   SOURCE_MEMBER_NAME: MemberJoinVoiceChannelPayload | MessageCreatePayload | MemberJoinVoiceChannelPayload | MemberJoinVoiceChannelPayload,
   SOURCE_MESSAGE_CONTENT: MessageCreatePayload,
+  SOURCE_SPEECH_CONTENT: MemberSpeakPayload
 }
 
 export { AvailableTemplateKeyword }

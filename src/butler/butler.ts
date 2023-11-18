@@ -1,14 +1,14 @@
 import { Client, Guild, VoiceState } from "discord.js";
 import { AvailableEvents } from "./events";
 import { ButlerCommand, JoinVoiceChannelCommand, ShowAvailableCommandsInTextChannelCommand } from "./commands";
-import { BasePayload, MemberJoinVoiceChannelPayload, MessageCreatePayload } from "./payloads";
+import { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "./payloads";
 import { AddCommandFromYamlCommand } from "./commands/statics/addCommandFromYaml";
 import { MemberLeaveVoiceChannelPayload } from "./payloads/memberLeaveVoiceChannelPayload";
 import { AudioPlayer, AudioPlayerStatus, AudioResource, NoSubscriberBehavior, VoiceConnection, createAudioPlayer, joinVoiceChannel } from "@discordjs/voice";
 import { createSpeech } from "./audioCreator";
 import { LeaveVoiceChannelCommand } from "./commands/statics/leaveVoiceChannel";
 import { RemoveCommandCommand } from "./commands/statics/removeCommandCommand";
-import { log } from "console";
+import { SpeechEvents, VoiceMessage, addSpeechEvent } from "discord-speech-recognition";
 
 class Butler {
   public client: Client
@@ -18,6 +18,7 @@ class Butler {
   private _staticCommands: ButlerCommand[]
   private _dynamicCommands: ButlerCommand[]
   constructor(client: Client, guildId: string) {
+    addSpeechEvent(client, { lang: "th-TH" })
     this.client = client
     this.guildId = guildId
     this.audioPlayer = createAudioPlayer({
@@ -34,6 +35,20 @@ class Butler {
     ]
     this._dynamicCommands = []
     this._attachEvents()
+    client.on(SpeechEvents.speech, (vm: VoiceMessage) => {
+      if (vm.guild.id !== this.guildId) return;
+      if (!vm.content) return;
+      if (!vm.member?.voice.channelId) return;
+      const content = vm.content
+      const payload: MemberSpeakPayload = {
+        timestamp: new Date().getTime(),
+        guildId: this.guildId,
+        speech: content,
+        sourceMember: vm.member,
+        voiceChannelId: vm.member.voice.channelId
+      }
+      this.fire(AvailableEvents.MemberSpeak, payload)
+    })
   }
   public async fire(event: AvailableEvents, payload: BasePayload) {
     for (let i = 0; i < this.numberOfCommands; i++) {
