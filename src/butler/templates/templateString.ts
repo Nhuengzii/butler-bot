@@ -68,7 +68,9 @@ class TemplateString {
       case "SOURCE_MESSAGE_TC_ID":
         return (payload as MessageCreatePayload).textChannelId
       case "SOURCE_MEMBER_USERNAME":
-        return payload.sourceMember.user.displayName
+        return payload.sourceMember.user.username
+      case "SOURCE_MEMBER_NAME":
+        return payload.sourceMember.displayName
       case "SOURCE_MESSAGE_CONTENT":
         return (payload as MessageCreatePayload).message.content
       case "SOURCE_MEMBER_ID":
