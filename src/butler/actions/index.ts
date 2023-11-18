@@ -9,11 +9,12 @@ import {
 } from "./controllers";
 import { ShowAvailableCommandsInTextChannelAction } from "./showAvailableCommandsInTextChannel";
 import { RemoveCommandAction } from "./removeCommandAction";
+import { DisconnectMemberAction } from "./disconnectMember";
 import { createButlerAction } from "./createAction";
 export {
   AvailableButlerAction, JoinVoiceChannelAction, createButlerAction,
   LeaveVoiceChannelAction, SendTextMessageToTextChannelAction, SayTextAction,
   EqualActionController, GreaterActionController, LesserActionController, DelayActionController,
   ShowAvailableCommandsInTextChannelAction, RemoveCommandAction, StartWithsActionController,
-  NotEqualActionController, NotStartWithsActionController
+  NotEqualActionController, NotStartWithsActionController, DisconnectMemberAction
 }

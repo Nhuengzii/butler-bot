@@ -1,6 +1,7 @@
 import { AvailableButlerAction, JoinVoiceChannelAction, SayTextAction } from ".";
 import { TemplateString } from "../templates";
 import { DelayActionController, EqualActionController, GreaterActionController, LesserActionController, StartWithsActionController } from "./controllers";
+import { DisconnectMemberAction } from "./disconnectMember";
 import { LeaveVoiceChannelAction } from "./leaveVoiceChannel";
 import { SendTextMessageToTextChannelAction } from "./sendTextMessageToTextChannel";
 
@@ -59,6 +60,23 @@ function createButlerAction(name: AvailableButlerAction, args: string[] | null) 
     }
     case AvailableButlerAction.SayText: {
       return new SayTextAction(
+        new TemplateString(args[0])
+      )
+    }
+    case AvailableButlerAction.NotEqualActionController: {
+      return new EqualActionController(
+        new TemplateString(args[0]),
+        new TemplateString(args[1])
+      )
+    }
+    case AvailableButlerAction.NotStartWithsActionController: {
+      return new StartWithsActionController(
+        new TemplateString(args[0]),
+        new TemplateString(args[1])
+      )
+    }
+    case AvailableButlerAction.DisconnectMember: {
+      return new DisconnectMemberAction(
         new TemplateString(args[0])
       )
     }

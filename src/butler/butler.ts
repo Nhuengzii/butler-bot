@@ -1,4 +1,4 @@
-import { Client, Guild } from "discord.js";
+import { Client, Guild, VoiceState } from "discord.js";
 import { AvailableEvents } from "./events";
 import { ButlerCommand, JoinVoiceChannelCommand, ShowAvailableCommandsInTextChannelCommand } from "./commands";
 import { BasePayload, MemberJoinVoiceChannelPayload, MessageCreatePayload } from "./payloads";
@@ -149,6 +149,12 @@ class Butler {
 
   get numberOfCommands(): number {
     return this.commands.length
+  }
+
+  public async getMemberVoiceState(memberId: string): Promise<VoiceState | undefined> {
+    const member = await this.client.guilds.cache.get(this.guildId)?.members.fetch(memberId)
+    if (!member) return undefined
+    return member.voice
   }
 }
 

@@ -10,6 +10,7 @@ enum AvailableButlerAction {
   StartWithsActionController = "StartWithsActionController",
   NotStartWithsActionController = "NotStartWithsActionController",
   SayText = "SayText",
+  DisconnectMember = "DisconnectMember",
 }
 
 export { AvailableButlerAction }
