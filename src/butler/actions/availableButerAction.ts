@@ -5,8 +5,10 @@ enum AvailableButlerAction {
   GreaterActionController = "GreaterActionController",
   LesserActionController = "LesserActionController",
   EqualActionController = "EqualActionController",
+  NotEqualActionController = "NotEqualActionController",
   DelayActionController = "DelayActionController",
   StartWithsActionController = "StartWithsActionController",
+  NotStartWithsActionController = "NotStartWithsActionController",
   SayText = "SayText",
 }
 
