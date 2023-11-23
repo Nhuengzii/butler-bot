@@ -5,6 +5,7 @@ import { DelayActionController } from "./delay";
 import { StartWithsActionController } from "./startWiths";
 import { NotEqualActionController } from "./notEqual";
 import { NotStartWithsActionController } from "./notStartWiths";
+import { ContainActionController } from "./contain";
 
 export {
   EqualActionController,
@@ -13,5 +14,6 @@ export {
   DelayActionController,
   StartWithsActionController,
   NotEqualActionController,
-  NotStartWithsActionController
+  NotStartWithsActionController,
+  ContainActionController
 }

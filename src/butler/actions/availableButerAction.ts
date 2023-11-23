@@ -6,6 +6,7 @@ enum AvailableButlerAction {
   LesserActionController = "LesserActionController",
   EqualActionController = "EqualActionController",
   NotEqualActionController = "NotEqualActionController",
+  ContainActionController = "ContainActionController",
   DelayActionController = "DelayActionController",
   StartWithsActionController = "StartWithsActionController",
   NotStartWithsActionController = "NotStartWithsActionController",
