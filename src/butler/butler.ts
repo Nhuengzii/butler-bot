@@ -1,6 +1,6 @@
 import { Client, Guild, VoiceState } from "discord.js";
 import { AvailableEvents } from "./events";
-import { ButlerCommand, JoinVoiceChannelCommand, ShowAvailableCommandsInTextChannelCommand } from "./commands";
+import { AddCommandFromInstuctionCommand, ButlerCommand, JoinVoiceChannelCommand, ShowAvailableCommandsInTextChannelCommand } from "./commands";
 import { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "./payloads";
 import { AddCommandFromYamlCommand } from "./commands/statics/addCommandFromYaml";
 import { MemberLeaveVoiceChannelPayload } from "./payloads/memberLeaveVoiceChannelPayload";
@@ -32,6 +32,7 @@ class Butler {
       new AddCommandFromYamlCommand(),
       new ShowAvailableCommandsInTextChannelCommand(),
       new RemoveCommandCommand(),
+      new AddCommandFromInstuctionCommand()
     ]
     this._dynamicCommands = []
     this._attachEvents()
