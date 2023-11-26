@@ -129,4 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 api/venv
-api/__pycache__
+api/**/__pycache__
