@@ -9,6 +9,7 @@ enum AvailableButlerAction {
   ContainActionController = "ContainActionController",
   DelayActionController = "DelayActionController",
   StartWithsActionController = "StartWithsActionController",
+  SendTextMessageToUser = "SendTextMessageToUser",
   NotStartWithsActionController = "NotStartWithsActionController",
   SayText = "SayText",
   DisconnectMember = "DisconnectMember",

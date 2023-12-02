@@ -1,4 +1,4 @@
-import { Client, Guild, VoiceState } from "discord.js";
+import { Client, Guild, Message, VoiceState } from "discord.js";
 import { AvailableEvents } from "./events";
 import { AddCommandFromInstuctionCommand, ButlerCommand, JoinVoiceChannelCommand, ShowAvailableCommandsInTextChannelCommand } from "./commands";
 import { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "./payloads";
@@ -150,6 +150,11 @@ class Butler {
 
   public playSound(audioResource: AudioResource) {
     this.audioPlayer.play(audioResource)
+  }
+
+  public async sendTextMessageToUser(userId: string, text: string) {
+    const user = await this.client.users.fetch(userId)
+    await user.send({ content: text })
   }
 
   public async sayText(text: string) {

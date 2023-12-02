@@ -3,6 +3,7 @@ import { JoinVoiceChannelAction } from "./joinVoiceChannel";
 import { LeaveVoiceChannelAction } from "./leaveVoiceChannel";
 import { SendTextMessageToTextChannelAction } from "./sendTextMessageToTextChannel";
 import { SayTextAction } from "./sayText";
+import { SendTextMessageToUser } from "./sendTextMessageToUser";
 import { AddCommandFromInstructionAction } from "./addCommandFromInstruction";
 import {
   EqualActionController, GreaterActionController, LesserActionController, DelayActionController,
@@ -19,5 +20,5 @@ export {
   EqualActionController, GreaterActionController, LesserActionController, DelayActionController,
   ShowAvailableCommandsInTextChannelAction, RemoveCommandAction, StartWithsActionController,
   NotEqualActionController, NotStartWithsActionController, DisconnectMemberAction,
-  AddCommandFromInstructionAction, ContainActionController
+  AddCommandFromInstructionAction, ContainActionController, SendTextMessageToUser
 }

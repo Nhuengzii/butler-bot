@@ -1,4 +1,4 @@
-import { AvailableButlerAction, JoinVoiceChannelAction, SayTextAction } from ".";
+import { AvailableButlerAction, JoinVoiceChannelAction, SayTextAction, SendTextMessageToUser } from ".";
 import { TemplateString } from "../templates";
 import { ContainActionController, DelayActionController, EqualActionController, GreaterActionController, LesserActionController, StartWithsActionController } from "./controllers";
 import { DisconnectMemberAction } from "./disconnectMember";
@@ -84,6 +84,11 @@ function createButlerAction(name: AvailableButlerAction, args: string[] | null) 
       return new ContainActionController(
         new TemplateString(args[0]),
         args.slice(1).map(arg => new TemplateString(arg))
+      )
+    } case AvailableButlerAction.SendTextMessageToUser: {
+      return new SendTextMessageToUser(
+        new TemplateString(args[0]),
+        new TemplateString(args[1])
       )
     }
     default: {
