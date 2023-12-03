@@ -12,6 +12,7 @@ import { SpeechEvents, VoiceMessage, addSpeechEvent } from "discord-speech-recog
 import { AvailableButlerAction, createButlerAction } from "./actions";
 import axios from "axios";
 import { time } from "console";
+import { parse } from "yaml";
 
 type GetGuildCommandResponse = {
   commands: {
@@ -165,6 +166,40 @@ class Butler {
     }
     this._dynamicCommands.push(command)
     return true
+  }
+
+  public async uploadCommandFromYaml(yaml_template: string) {
+    const commandTemplate: {
+      name: string,
+      targetEvents: AvailableEvents[],
+      description: string,
+      actions: {
+        name: AvailableButlerAction,
+        args: string[] | null
+      }[]
+    } = parse(yaml_template)
+    const url = `http://localhost:8000/commands`
+    const body = {
+      name: commandTemplate.name,
+      description: commandTemplate.description,
+      events: commandTemplate.targetEvents,
+      actions: commandTemplate.actions.map(a => {
+        return {
+          name: a.name,
+          args: a.args
+        }
+      })
+    }
+    const id = await axios.post<{ "uuid": string }>(url, body)
+    await this.saveCommand(id.data.uuid)
+  }
+
+  public async saveCommand(commandId: string) {
+    const url = `http://localhost:8000/guilds/${this.guildId}/commands`
+    const body = {
+      command_id: commandId
+    }
+    await axios.post(url, body)
   }
 
   public removeCommand(commandName: string): boolean {

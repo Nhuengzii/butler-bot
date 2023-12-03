@@ -15,6 +15,7 @@ class AddCommandFromYamlAction implements ButlerAction {
       return false
     }
     const command = ButlerCommand.fromYaml(yaml)
+    await butler.uploadCommandFromYaml(yaml)
     butler.addCommand(command)
     return true
   }
