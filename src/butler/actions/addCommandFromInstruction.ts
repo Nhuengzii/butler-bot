@@ -4,18 +4,30 @@ import { BasePayload } from "../payloads";
 import { TemplateString } from "../templates";
 import { ButlerAction } from "./base";
 import { ButlerCommand } from "../commands";
-import { log } from "console";
+import { AvailableButlerAction, createButlerAction } from ".";
+import { AvailableEvents } from "../events";
+
+type GenCommandResponse = {
+  command: {
+    name: string,
+    description: string,
+    events: AvailableEvents[],
+    actions: {
+      name: AvailableButlerAction,
+      args: string[],
+    }[],
+  }
+}
 
 class AddCommandFromInstructionAction implements ButlerAction {
   constructor(public instruction: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
     const instruction = this.instruction.format(payload);
     try {
-      const res = await axios.get<{ command: string }>("http://localhost:8000/gen-command", { params: { instruction } })
-      const yaml = res.data.command.replace(`\`\`\`yaml
-`, "").replace(`\`\`\``, "")
-      log(yaml);
-      const command = ButlerCommand.fromYaml(yaml);
+      const res = await axios.get<GenCommandResponse>("http://localhost:8000/commands/gen-command", { params: { q: instruction } })
+      const data = res.data.command
+      console.log(data);
+      const command = new ButlerCommand(data.name, data.events, data.actions.map(a => createButlerAction(a.name, a.args)))
       butler.addCommand(command);
     } catch (e) {
       console.error(e);

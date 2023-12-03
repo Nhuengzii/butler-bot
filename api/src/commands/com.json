@@ -1,0 +1,128 @@
+{
+  "commands": [
+    {
+      "name": "say hi back",
+      "description": "if member says hi, bot says hi back",
+      "events": [
+        "MemberSpeak"
+      ],
+      "actions": [
+        {
+          "name": "EqualActionController",
+          "args": [
+            "{SOURCE_MEMBER_SPEECH}",
+            "hi"
+          ]
+        },
+        {
+          "name": "SayText",
+          "args": [
+            "hi"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "join vc",
+      "description": "if member send text '--join', bot join to the vc that member is in",
+      "events": [
+        "MemberSendTextMessage"
+      ],
+      "actions": [
+        {
+          "name": "EqualActionController",
+          "args": [
+            "{SOURCE_MESSAGE_CONTENT}",
+            "--join"
+          ]
+        },
+        {
+          "name": "JoinVoiceChannel",
+          "args": [
+            "{SOURCE_MEMBER_VC_ID}"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "say name of the joiner",
+      "description": "Say the name of the member who joined the vc",
+      "events": [
+        "MemberJoinVoiceChannel"
+      ],
+      "actions": [
+        {
+          "name": "SayText",
+          "args": [
+            "{SOURCE_MEMBER_NAME} เข้า"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "say name of he leaver",
+      "description": "Say the name of the member who left the vc",
+      "events": [
+        "MemberLeaveVoiceChannel"
+      ],
+      "actions": [
+        {
+          "name": "SayText",
+          "args": [
+            "{SOURCE_MEMBER_NAME} ออก"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "disconnect member that request to leave",
+      "description": "If speech of member is in the list, bot disconnect the member",
+      "events": [
+        "MemberSpeak"
+      ],
+      "actions": [
+        {
+          "name": "ContainActionController",
+          "args": [
+            "{SOURCE_MEMBER_SPEECH}",
+            "เตะผมออกหน่อย",
+            "เตะผมที"
+          ]
+        },
+        {
+          "name": "DisconnectMember",
+          "args": [
+            "{SOURCE_MEMBER_ID}"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "warn the rude member",
+      "description": "if member send rude word to text channel, bot warn the member",
+      "events": [
+        "MemberSendTextMessage"
+      ],
+      "actions": [
+        {
+          "name": "ContainActionController",
+          "args": [
+            "{SOURCE_MESSAGE_CONTENT}",
+            "ไอสัส",
+            "ควย",
+            "สัส",
+            "เชี่ย",
+            "เหี้ย"
+          ]
+        },
+        {
+          "name": "SendTextMessageToTextChannel",
+          "args": [
+            "{SOURCE_MESSAGE_TC_ID}",
+            "อย่าส่งคำหยาบนะครับ"
+          ]
+        }
+      ]
+    }
+  ]
+}
