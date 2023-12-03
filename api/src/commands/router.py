@@ -20,6 +20,13 @@ def get_commands():
         ]
     }
 
+@router.get("/{uuid}")
+def get_command(uuid: str):
+    command = services.get_command(uuid)
+    if command is None:
+        return None
+    return command
+
 @router.post("/")
 def post_commands(command: PostCommandBody):
     uuid = services.insert_command(ButlerCommand(

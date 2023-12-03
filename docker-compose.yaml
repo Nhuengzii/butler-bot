@@ -2,6 +2,8 @@ version: "3.4"
 services:
   api:
     build: ./api
+    environment:
+      - WEAVIATE_HOST=weaviate
     ports:
       - "8000:8000"
   weaviate:

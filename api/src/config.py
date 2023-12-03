@@ -2,8 +2,11 @@ import os
 from starlette.config import Config
 config = Config(".env")
 
-OPENAI_API_KEY = config.get("OPENAI_API_KEY")
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+if os.environ.get("OPENAI_API_KEY") is None:
+    os.environ["OPENAI_API_KEY"] = config.get("OPENAI_API_KEY")
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+WEAVIATE_HOST = os.environ.get("WEAVIATE_HOST", "localhost")
 
 SYSTEM_INSTRUCTION = r'''Your task is to create a command that use in The Butler bot system. Using the following description of the system delimiterd by triple backticks as knowledge base.
 ```Available events are 
