@@ -9,13 +9,12 @@ from .models import Guild
 import weaviate.classes as wvc
 
 def setup_guild(guild_id: str):
-    if get_guild(guild_id) is not None:
-        raise HTTPException(status_code=409, detail="Guild already exists")
     guild: Guild = {
         "guild_id": guild_id,
         "commands": []
     }
-    guild_collection.data.insert(properties=dict(guild))
+    uuid = guild_collection.data.insert(properties=dict(guild))
+    return uuid
 
 def list_guilds():
     fetches =  guild_collection.query.fetch_objects(return_properties=Guild)
@@ -30,8 +29,6 @@ def list_guilds():
 
 def list_guild_commands(guild_id: str):
     guild = get_guild(guild_id)
-    if guild is None:
-        return None
     guild, gid = guild
     commands: List[ButlerCommand] = []
     for command_id in guild["commands"]:
@@ -43,14 +40,15 @@ def list_guild_commands(guild_id: str):
         commands.append(c)
     return commands
 
-def get_guild(guild_id: str) -> tuple[Guild, UUID] | None:
+def get_guild(guild_id: str) -> tuple[Guild, UUID]:
     fetch = guild_collection.query.fetch_objects(
         filters=wvc.Filter(path="guild_id").equal(guild_id),
         limit=1,
         return_properties=Guild
     )
     if len(fetch.objects) == 0:
-        return None
+        uuid = setup_guild(guild_id)
+        return ({"guild_id": guild_id, "commands": []}, uuid)
     return (fetch.objects[0].properties, fetch.objects[0].uuid)
 
 def add_command(guild_id: str, command_id: str):

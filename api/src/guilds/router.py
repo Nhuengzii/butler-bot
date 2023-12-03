@@ -20,8 +20,6 @@ def post_guild(guild_id: PostGuildBody):
 @router.get("/{guild_id}")
 def get_guild(guild_id: str):
     guild = services.get_guild(guild_id)
-    if guild is None:
-        raise HTTPException(status_code=404, detail="Guild not found")
     return {
         "guild": guild[0]
     }
@@ -29,8 +27,6 @@ def get_guild(guild_id: str):
 @router.get("/{guild_id}/commands")
 def get_guild_commands(guild_id: str):
     commands = services.list_guild_commands(guild_id)
-    if commands is None:
-        raise HTTPException(status_code=404, detail="Guild not found")
     return {
         "commands": commands
     }
