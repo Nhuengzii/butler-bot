@@ -9,6 +9,21 @@ import { createSpeech } from "./audioCreator";
 import { LeaveVoiceChannelCommand } from "./commands/statics/leaveVoiceChannel";
 import { RemoveCommandCommand } from "./commands/statics/removeCommandCommand";
 import { SpeechEvents, VoiceMessage, addSpeechEvent } from "discord-speech-recognition";
+import { AvailableButlerAction, createButlerAction } from "./actions";
+import axios from "axios";
+import { time } from "console";
+
+type GetGuildCommandResponse = {
+  commands: {
+    name: string,
+    events: AvailableEvents[],
+    description: string,
+    actions: {
+      name: AvailableButlerAction,
+      args: string[]
+    }[]
+  }[]
+}
 
 class Butler {
   public client: Client
@@ -50,7 +65,27 @@ class Butler {
       }
       this.fire(AvailableEvents.MemberSpeak, payload)
     })
+    this.loadGuildCommands()
+
   }
+  public async loadGuildCommands() {
+    try {
+      const url = `http://localhost:8000/guilds/${this.guildId}/commands`
+      const res = await axios.get<GetGuildCommandResponse>(url)
+      for (let i = 0; i < res.data.commands.length; i++) {
+        const c = res.data.commands[i]
+        const command = new ButlerCommand(
+          c.name,
+          c.events,
+          c.actions.map(a => createButlerAction(a.name, a.args))
+        )
+        this.addCommand(command)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   public async fire(event: AvailableEvents, payload: BasePayload) {
     for (let i = 0; i < this.numberOfCommands; i++) {
       const command = this.commands[i]
