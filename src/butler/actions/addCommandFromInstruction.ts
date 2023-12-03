@@ -29,6 +29,7 @@ class AddCommandFromInstructionAction implements ButlerAction {
       console.log(data);
       const command = new ButlerCommand(data.name, data.events, data.actions.map(a => createButlerAction(a.name, a.args)))
       butler.addCommand(command);
+      await axios.post("http://localhost:8000/commands", data)
     } catch (e) {
       console.error(e);
       return false;
