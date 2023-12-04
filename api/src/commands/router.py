@@ -40,6 +40,19 @@ def post_commands(command: PostCommandBody):
         "uuid": uuid
     }
 
+@router.patch("/{uuid}")
+def patch_command(uuid: str, command: PostCommandBody):
+    new_command = ButlerCommand(
+        name=command.name,
+        description=command.description,
+        events=command.events,
+        actions=command.actions
+    )
+    services.update_command(uuid, new_command)
+    return {
+        "uuid": uuid
+    }
+
 @router.delete("/{uuid}")
 def delete_command(uuid: str):
     services.delete_command(uuid)

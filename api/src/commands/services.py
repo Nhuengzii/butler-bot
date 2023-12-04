@@ -28,6 +28,14 @@ def get_command(uuid: str) -> ButlerCommand | None:
         print(obj)
         return yaml.safe_load(obj.properties["command"])
 
+def update_command(uuid: str, command: ButlerCommand):
+    """Update a command"""
+    parsed_command = command_to_yaml(command)
+    command_collection.data.update(
+        uuid=uuid,
+        properties={"command": parsed_command}
+    )
+
 def insert_command(command: ButlerCommand):
     """Insert a command"""
     parsed_command = command_to_yaml(command)
