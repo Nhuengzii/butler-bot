@@ -6,9 +6,9 @@ import { ButlerAction } from "../base";
 class GreaterActionController implements ButlerAction {
   constructor(public a: TemplateString, public b: TemplateString) { }
   async execute(buter: Butler, payload: BasePayload): Promise<boolean> {
-    const a = Number.parseFloat(this.a.format(payload))
-    const b = Number.parseFloat(this.b.format(payload))
-    return a > b;
+    const a = await buter.parse(this.a, payload)
+    const b = await buter.parse(this.b, payload)
+    return Number.parseFloat(a) > Number.parseFloat(b);
   }
   validatePayload(payload: BasePayload): boolean {
     throw new Error("Method not implemented.");

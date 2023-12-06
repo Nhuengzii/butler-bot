@@ -6,7 +6,8 @@ import { ButlerAction } from "./base";
 class ShowAvailableCommandsInTextChannelAction implements ButlerAction {
   constructor(public textChannelId: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const channel = await butler.client.channels.fetch(this.textChannelId.format(payload));
+    const textChannelId = await butler.parse(this.textChannelId, payload);
+    const channel = await butler.client.channels.fetch(textChannelId);
     if (!channel?.isTextBased()) {
       return false;
     }

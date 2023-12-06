@@ -6,7 +6,8 @@ import { ButlerAction } from "./base";
 class SayTextAction implements ButlerAction {
   constructor(public text: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    await butler.sayText(this.text.format(payload))
+    const text = await butler.parse(this.text, payload)
+    await butler.sayText(text)
     return true
   }
   validatePayload(payload: BasePayload): boolean {

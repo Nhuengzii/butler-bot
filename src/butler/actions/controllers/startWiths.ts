@@ -7,8 +7,8 @@ class StartWithsActionController implements ButlerAction {
   constructor(public a: TemplateString, public b: TemplateString) {
   }
   async execute(butler: Butler, payload: BasePayload) {
-    const a = this.a.format(payload);
-    const b = this.b.format(payload);
+    const a = await butler.parse(this.a, payload)
+    const b = await butler.parse(this.b, payload)
     return a.startsWith(b);
   }
   validatePayload(payload: BasePayload): boolean {

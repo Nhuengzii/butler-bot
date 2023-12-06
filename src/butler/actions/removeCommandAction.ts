@@ -6,7 +6,7 @@ import { ButlerAction } from "./base";
 class RemoveCommandAction implements ButlerAction {
   constructor(public commandName: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const commandName = this.commandName.format(payload);
+    const commandName = await butler.parse(this.commandName, payload);
     return butler.removeCommand(commandName);
   }
   validatePayload(payload: BasePayload): boolean {

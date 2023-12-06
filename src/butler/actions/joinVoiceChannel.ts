@@ -9,7 +9,7 @@ class JoinVoiceChannelAction implements ButlerAction {
     this.targetChannel = targetChannel;
   }
   async execute(butler: Butler, payload: BasePayload) {
-    const channelId = TemplateString.getValueOfKeyword("SOURCE_MEMBER_VC_ID", payload as MemberJoinVoiceChannelPayload);
+    const channelId = await butler.parse(this.targetChannel, payload)
     const guild = await butler.client.guilds.fetch(payload.guildId)
     if (!guild) {
       throw new Error("Guild not found");

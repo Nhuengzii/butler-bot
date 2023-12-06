@@ -9,7 +9,7 @@ class AddCommandFromYamlAction implements ButlerAction {
 
   }
   async execute(butler: Butler, payload: BasePayload) {
-    const yaml = this.messageContent.format(payload).replace(`\`\`\`yaml
+    const yaml = (await butler.parse(this.messageContent, payload)).replace(`\`\`\`yaml
 `, "").replace(`\`\`\``, "")
     if (!ButlerCommand.validateYaml(yaml)) {
       return false

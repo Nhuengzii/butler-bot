@@ -6,7 +6,7 @@ import { ButlerAction } from "./base";
 class DisconnectMemberAction implements ButlerAction {
   constructor(public memberId: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const voiceSatae = await butler.getMemberVoiceState(this.memberId.format(payload))
+    const voiceSatae = await butler.getMemberVoiceState((await butler.parse(this.memberId, payload)))
     if (!voiceSatae) return false
     await voiceSatae.disconnect()
     return true

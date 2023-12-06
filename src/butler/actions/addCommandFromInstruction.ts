@@ -22,7 +22,7 @@ type GenCommandResponse = {
 class AddCommandFromInstructionAction implements ButlerAction {
   constructor(public instruction: TemplateString) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const instruction = this.instruction.format(payload);
+    const instruction = await butler.parse(this.instruction, payload)
     try {
       const res = await axios.get<GenCommandResponse>("http://localhost:8000/commands/gen-command", { params: { q: instruction } })
       const data = res.data.command

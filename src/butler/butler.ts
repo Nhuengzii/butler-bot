@@ -11,8 +11,8 @@ import { RemoveCommandCommand } from "./commands/statics/removeCommandCommand";
 import { SpeechEvents, VoiceMessage, addSpeechEvent } from "discord-speech-recognition";
 import { AvailableButlerAction, createButlerAction } from "./actions";
 import axios from "axios";
-import { time } from "console";
 import { parse } from "yaml";
+import { TemplateString, TemplateStringParser } from "./templates";
 
 type GetGuildCommandResponse = {
   commands: {
@@ -33,6 +33,7 @@ class Butler {
   public voiceConnection: undefined | VoiceConnection
   private _staticCommands: ButlerCommand[]
   private _dynamicCommands: ButlerCommand[]
+  private _parser: TemplateStringParser
   constructor(client: Client, guildId: string) {
     addSpeechEvent(client, { lang: "th-TH" })
     this.client = client
@@ -52,20 +53,7 @@ class Butler {
     ]
     this._dynamicCommands = []
     this._attachEvents()
-    client.on(SpeechEvents.speech, (vm: VoiceMessage) => {
-      if (vm.guild.id !== this.guildId) return;
-      if (!vm.content) return;
-      if (!vm.member?.voice.channelId) return;
-      const content = vm.content
-      const payload: MemberSpeakPayload = {
-        timestamp: new Date().getTime(),
-        guildId: this.guildId,
-        speech: content,
-        sourceMember: vm.member,
-        voiceChannelId: vm.member.voice.channelId
-      }
-      this.fire(AvailableEvents.MemberSpeak, payload)
-    })
+    this._parser = new TemplateStringParser(client)
     this.loadGuildCommands()
 
   }
@@ -154,6 +142,21 @@ class Butler {
         this.fire(AvailableEvents.MemberLeaveVoiceChannel, payload)
       }
     })
+
+    this.client.on(SpeechEvents.speech, (vm: VoiceMessage) => {
+      if (vm.guild.id !== this.guildId) return;
+      if (!vm.content) return;
+      if (!vm.member?.voice.channelId) return;
+      const content = vm.content
+      const payload: MemberSpeakPayload = {
+        timestamp: new Date().getTime(),
+        guildId: this.guildId,
+        speech: content,
+        sourceMember: vm.member,
+        voiceChannelId: vm.member.voice.channelId
+      }
+      this.fire(AvailableEvents.MemberSpeak, payload)
+    })
   }
 
   public get commands(): ButlerCommand[] {
@@ -236,6 +239,10 @@ class Butler {
       })
     })
     return promise
+  }
+
+  public async parse(templateString: TemplateString, payload: BasePayload): Promise<string> {
+    return await this._parser.parse(templateString, payload)
   }
 
   get numberOfCommands(): number {

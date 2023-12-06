@@ -10,8 +10,8 @@ class SendTextMessageToUser implements ButlerAction {
   }
 
   public async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const userId = this.userId.format(payload)
-    const text = this.text.format(payload)
+    const userId = await butler.parse(this.userId, payload)
+    const text = await butler.parse(this.text, payload)
     await butler.sendTextMessageToUser(userId, text)
     return true
   }

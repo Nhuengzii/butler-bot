@@ -11,8 +11,8 @@ class SendTextMessageToTextChannelAction implements ButlerAction {
     this.textMessage = textMessage;
   }
   async execute(butler: Butler, payload: BasePayload) {
-    const text = this.textMessage.format(payload);
-    const targetChannelId = this.targetChannelId.format(payload);
+    const text = await butler.parse(this.textMessage, payload);
+    const targetChannelId = await butler.parse(this.targetChannelId, payload);
     const channel = butler.client.channels.cache.get(targetChannelId);
     if (channel?.isTextBased()) {
       await channel.send({ content: text })

@@ -6,8 +6,9 @@ import { ButlerAction } from "../base";
 class ContainActionController implements ButlerAction {
   constructor(public text: TemplateString, public subtext: TemplateString[]) { }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const text = this.text.format(payload);
-    return this.subtext.some(subtext => text.includes(subtext.format(payload)));
+    const text = await butler.parse(this.text, payload);
+    const subtext = await Promise.all(this.subtext.map(async (subtext) => await butler.parse(subtext, payload)))
+    return subtext.some(subtext => text.includes(subtext))
   }
   validatePayload(payload: BasePayload): boolean {
     throw new Error("Method not implemented.");

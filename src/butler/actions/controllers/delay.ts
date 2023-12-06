@@ -8,8 +8,8 @@ class DelayActionController implements ButlerAction {
   constructor(public timeout: TemplateString) {
   }
   async execute(butler: Butler, payload: BasePayload): Promise<boolean> {
-    const timeout = Number.parseInt(this.timeout.format(payload))
-    await new Promise(resolve => setTimeout(resolve, timeout))
+    const timeout = await butler.parse(this.timeout, payload)
+    await new Promise(resolve => setTimeout(resolve, Number.parseInt(timeout)))
     return true
   }
   validatePayload(payload: BasePayload): boolean {
