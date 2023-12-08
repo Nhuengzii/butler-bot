@@ -63,7 +63,10 @@ class TemplateString {
     "SOURCE_MESSAGE_CONTENT",
     "SOURCE_MEMBER_ID",
     "SOURCE_MEMBER_NAME",
-    "SOURCE_SPEECH_CONTENT"
+    "SOURCE_SPEECH_CONTENT",
+    "SOURCE_MEMBER_VC_NAME",
+    "SOURCE_MESSAGE_TC_NAME",
+
   ]
 }
 export { TemplateString }
