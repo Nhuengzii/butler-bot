@@ -61,6 +61,10 @@ actions:
       - "Hi {SOURCE_MEMBER_NAME}!"
 ```
 
+## Workflow viewer
+
+Use `--workflows` in a text channel to open a read-only workflow viewer for dynamic commands. Use the Prev/Next buttons to page actions and the select menu to switch commands.
+
 ## Bun migration notes
 
 `discord-speech-recognition` has been removed because it hard-depends on the native `@discordjs/opus` binary, which fails under Bun (Node ABI mismatch). Until a Bun-compatible Opus build is available, the speech recognition hook in `src/butler/butler.ts` is disabled and the `MemberSpeak` event will not fire.

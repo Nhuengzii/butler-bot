@@ -1,5 +1,5 @@
 import type { AvailableTemplateKeyword } from ".";
-import type { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads";
+import type { BasePayload, MemberJoinVoiceChannelPayload, MemberLeaveVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads";
 
 class TemplateString {
   public template: string;
@@ -41,7 +41,7 @@ class TemplateString {
     keywords.forEach(keyword => {
       const value = TemplateString.getValueOfKeyword(
         keyword as keyof AvailableTemplateKeyword,
-        payload as MemberJoinVoiceChannelPayload | MessageCreatePayload | MemberSpeakPayload
+        payload as MemberJoinVoiceChannelPayload | MemberLeaveVoiceChannelPayload | MessageCreatePayload | MemberSpeakPayload
       )
       formattedString = formattedString.replace(`{${keyword}}`, value)
     })
@@ -70,8 +70,11 @@ class TemplateString {
     payload: AvailableTemplateKeyword[T]
   ): string {
     switch (keyword) {
-      case "SOURCE_MEMBER_VC_ID":
-        return (payload as MemberJoinVoiceChannelPayload).sourceMember.voice.channelId || ""
+      case "SOURCE_MEMBER_VC_ID": {
+        const voiceChannelId = (payload as MemberLeaveVoiceChannelPayload).voiceChannelId
+          ?? (payload as MemberJoinVoiceChannelPayload).sourceMember.voice.channelId
+        return voiceChannelId || ""
+      }
       case "SOURCE_MESSAGE_TC_ID":
         return (payload as MessageCreatePayload).textChannelId
       case "SOURCE_MEMBER_USERNAME":
@@ -84,8 +87,13 @@ class TemplateString {
         return payload.sourceMember.user.id
       case "SOURCE_SPEECH_CONTENT":
         return (payload as MemberSpeakPayload).speech
-      case "SOURCE_MEMBER_VC_NAME":
-        return payload.sourceMember.voice.channel?.name || ""
+      case "SOURCE_MEMBER_VC_NAME": {
+        const voiceChannelId = (payload as MemberLeaveVoiceChannelPayload).voiceChannelId
+          ?? (payload as MemberJoinVoiceChannelPayload).sourceMember.voice.channelId
+        if (!voiceChannelId) return ""
+        const channel = payload.sourceMember.guild.channels.cache.get(voiceChannelId)
+        return channel?.name || ""
+      }
       case "SOURCE_MESSAGE_TC_NAME": {
         const messagePayload = payload as MessageCreatePayload
         const channel = messagePayload.sourceMember.guild.channels.cache.get(messagePayload.textChannelId)

@@ -3,7 +3,7 @@ import { Database } from "bun:sqlite";
 import { AvailableButlerAction } from "../actions";
 import { AvailableEvents } from "../events";
 
-type StoredCommand = {
+export type StoredCommand = {
   id: string;
   name: string;
   description: string;
