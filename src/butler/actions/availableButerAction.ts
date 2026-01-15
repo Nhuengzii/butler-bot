@@ -1,5 +1,6 @@
 enum AvailableButlerAction {
   SendTextMessageToTextChannel = "SendTextMessageToTextChannel",
+  SendTextMessageToChannelByName = "SendTextMessageToChannelByName",
   JoinVoiceChannel = "JoinVoiceChannel",
   LeaveVoiceChannel = "LeaveVoiceChannel",
   GreaterActionController = "GreaterActionController",

@@ -2,6 +2,7 @@ import { AvailableButlerAction } from "./availableButerAction";
 import { JoinVoiceChannelAction } from "./joinVoiceChannel";
 import { LeaveVoiceChannelAction } from "./leaveVoiceChannel";
 import { SendTextMessageToTextChannelAction } from "./sendTextMessageToTextChannel";
+import { SendTextMessageToChannelByNameAction } from "./sendTextMessageToChannelByName";
 import { SayTextAction } from "./sayText";
 import { SendTextMessageToUser } from "./sendTextMessageToUser";
 import { AddCommandFromInstructionAction } from "./addCommandFromInstruction";
@@ -16,7 +17,7 @@ import { DisconnectMemberAction } from "./disconnectMember";
 import { createButlerAction } from "./createAction";
 export {
   AvailableButlerAction, JoinVoiceChannelAction, createButlerAction,
-  LeaveVoiceChannelAction, SendTextMessageToTextChannelAction, SayTextAction,
+  LeaveVoiceChannelAction, SendTextMessageToTextChannelAction, SendTextMessageToChannelByNameAction, SayTextAction,
   EqualActionController, GreaterActionController, LesserActionController, DelayActionController,
   ShowAvailableCommandsInTextChannelAction, RemoveCommandAction, StartWithsActionController,
   NotEqualActionController, NotStartWithsActionController, DisconnectMemberAction,

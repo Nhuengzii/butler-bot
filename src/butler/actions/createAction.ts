@@ -3,6 +3,7 @@ import { TemplateString } from "../templates";
 import { ContainActionController, DelayActionController, EqualActionController, GreaterActionController, LesserActionController, StartWithsActionController } from "./controllers";
 import { DisconnectMemberAction } from "./disconnectMember";
 import { LeaveVoiceChannelAction } from "./leaveVoiceChannel";
+import { SendTextMessageToChannelByNameAction } from "./sendTextMessageToChannelByName";
 import { SendTextMessageToTextChannelAction } from "./sendTextMessageToTextChannel";
 
 function createButlerAction(name: AvailableButlerAction, args: string[] | null) {
@@ -25,6 +26,15 @@ function createButlerAction(name: AvailableButlerAction, args: string[] | null) 
         throw new Error(`Invalid args length for action ${name}`)
       }
       return new SendTextMessageToTextChannelAction(
+        new TemplateString(args[0]),
+        new TemplateString(args[1])
+      )
+    }
+    case AvailableButlerAction.SendTextMessageToChannelByName: {
+      if (args.length !== 2) {
+        throw new Error(`Invalid args length for action ${name}`)
+      }
+      return new SendTextMessageToChannelByNameAction(
         new TemplateString(args[0]),
         new TemplateString(args[1])
       )
