@@ -3,7 +3,6 @@ import { AvailableButlerAction, createButlerAction } from "../actions";
 import { ButlerAction } from "../actions/base";
 import { AvailableEvents } from "../events";
 import { BasePayload } from "../payloads";
-import { parse } from "yaml"
 
 class ButlerCommand {
   constructor(public name: string, public targetEvents: AvailableEvents[], public actions: ButlerAction[]) { }
@@ -23,7 +22,7 @@ class ButlerCommand {
         name: AvailableButlerAction,
         args: string[] | null
       }[]
-    } = parse(y)
+    } = Bun.YAML.parse(y)
     return new ButlerCommand(commandTemplate.name,
       commandTemplate.targetEvents,
       commandTemplate.actions.map(a => createButlerAction(a.name, a.args))

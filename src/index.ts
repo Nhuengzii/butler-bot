@@ -1,7 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js'
-import { config } from 'dotenv'
 import { Butler } from './butler'
-config()
 
 const client = new Client({
   intents: [
@@ -15,7 +13,7 @@ const client = new Client({
 
 const butlers: Record<string, Butler> = {}
 
-client.on('ready', () => {
+client.on('clientReady', () => {
   console.log('Bot is ready')
   client.guilds.cache.forEach(guild => {
     console.log(`Guild: ${guild.name}`);

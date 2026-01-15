@@ -1,5 +1,6 @@
 import { Client } from "discord.js";
-import { AvailableTemplateKeyword, TemplateString } from ".";
+import type { AvailableTemplateKeyword } from ".";
+import { TemplateString } from ".";
 import { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads";
 
 class TemplateStringParser {

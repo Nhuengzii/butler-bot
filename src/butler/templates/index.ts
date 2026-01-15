@@ -1,5 +1,6 @@
-import { AvailableTemplateKeyword } from "./availableKeywords";
+import type { AvailableTemplateKeyword } from "./availableKeywords";
 import { TemplateString } from "./templateString";
 import { TemplateStringParser } from "./parser";
 
-export { AvailableTemplateKeyword, TemplateString, TemplateStringParser }
+export type { AvailableTemplateKeyword }
+export { TemplateString, TemplateStringParser }

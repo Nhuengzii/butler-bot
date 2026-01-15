@@ -1,3 +1,5 @@
+import { describe, expect, test } from "bun:test"
+
 import { ButlerCommand } from ".."
 
 describe("butler commands workds", () => {

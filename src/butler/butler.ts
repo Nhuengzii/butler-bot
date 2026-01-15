@@ -8,21 +8,17 @@ import { AudioPlayer, AudioPlayerStatus, AudioResource, NoSubscriberBehavior, Vo
 import { createSpeech } from "./audioCreator";
 import { LeaveVoiceChannelCommand } from "./commands/statics/leaveVoiceChannel";
 import { RemoveCommandCommand } from "./commands/statics/removeCommandCommand";
-import { SpeechEvents, VoiceMessage, addSpeechEvent } from "discord-speech-recognition";
 import { AvailableButlerAction, createButlerAction } from "./actions";
-import axios from "axios";
-import { parse } from "yaml";
 import { TemplateString, TemplateStringParser } from "./templates";
+import { CommandStore } from "./storage/commandStore";
 
-type GetGuildCommandResponse = {
-  commands: {
-    name: string,
-    events: AvailableEvents[],
-    description: string,
-    actions: {
-      name: AvailableButlerAction,
-      args: string[]
-    }[]
+type StoredCommand = {
+  name: string,
+  events: AvailableEvents[],
+  description: string,
+  actions: {
+    name: AvailableButlerAction,
+    args: string[] | null
   }[]
 }
 
@@ -34,8 +30,8 @@ class Butler {
   private _staticCommands: ButlerCommand[]
   private _dynamicCommands: ButlerCommand[]
   private _parser: TemplateStringParser
+  private _commandStore: CommandStore
   constructor(client: Client, guildId: string) {
-    addSpeechEvent(client, { lang: "th-TH" })
     this.client = client
     this.guildId = guildId
     this.audioPlayer = createAudioPlayer({
@@ -54,19 +50,19 @@ class Butler {
     this._dynamicCommands = []
     this._attachEvents()
     this._parser = new TemplateStringParser(client)
+    this._commandStore = new CommandStore()
     this.loadGuildCommands()
 
   }
   public async loadGuildCommands() {
     try {
-      const url = `http://localhost:8000/guilds/${this.guildId}/commands`
-      const res = await axios.get<GetGuildCommandResponse>(url)
-      for (let i = 0; i < res.data.commands.length; i++) {
-        const c = res.data.commands[i]
+      const commands = this._commandStore.getCommandsForGuild(this.guildId)
+      for (let i = 0; i < commands.length; i++) {
+        const c = commands[i]
         const command = new ButlerCommand(
           c.name,
           c.events,
-          c.actions.map(a => createButlerAction(a.name, a.args))
+          c.actions.map(a => createButlerAction(a.name, a.args || []))
         )
         this.addCommand(command)
       }
@@ -142,21 +138,6 @@ class Butler {
         this.fire(AvailableEvents.MemberLeaveVoiceChannel, payload)
       }
     })
-
-    this.client.on(SpeechEvents.speech, (vm: VoiceMessage) => {
-      if (vm.guild.id !== this.guildId) return;
-      if (!vm.content) return;
-      if (!vm.member?.voice.channelId) return;
-      const content = vm.content
-      const payload: MemberSpeakPayload = {
-        timestamp: new Date().getTime(),
-        guildId: this.guildId,
-        speech: content,
-        sourceMember: vm.member,
-        voiceChannelId: vm.member.voice.channelId
-      }
-      this.fire(AvailableEvents.MemberSpeak, payload)
-    })
   }
 
   public get commands(): ButlerCommand[] {
@@ -180,9 +161,8 @@ class Butler {
         name: AvailableButlerAction,
         args: string[] | null
       }[]
-    } = parse(yaml_template)
-    const url = `http://localhost:8000/commands`
-    const body = {
+    } = Bun.YAML.parse(yaml_template)
+    const command: StoredCommand = {
       name: commandTemplate.name,
       description: commandTemplate.description,
       events: commandTemplate.targetEvents,
@@ -193,16 +173,7 @@ class Butler {
         }
       })
     }
-    const id = await axios.post<{ "uuid": string }>(url, body)
-    await this.saveCommand(id.data.uuid)
-  }
-
-  public async saveCommand(commandId: string) {
-    const url = `http://localhost:8000/guilds/${this.guildId}/commands`
-    const body = {
-      command_id: commandId
-    }
-    await axios.post(url, body)
+    this._commandStore.saveCommandForGuild(this.guildId, command)
   }
 
   public removeCommand(commandName: string): boolean {
@@ -214,6 +185,7 @@ class Butler {
       return false
     }
     this._dynamicCommands.splice(index, 1)
+    this._commandStore.removeCommandForGuild(this.guildId, commandName)
     return true
   }
 

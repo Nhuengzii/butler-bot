@@ -1,5 +1,5 @@
-import { AvailableTemplateKeyword } from ".";
-
+import type { AvailableTemplateKeyword } from ".";
+import type { BasePayload, MemberJoinVoiceChannelPayload, MemberSpeakPayload, MessageCreatePayload } from "../payloads";
 
 class TemplateString {
   public template: string;
@@ -35,6 +35,23 @@ class TemplateString {
     return TemplateString.getToBeDeletedSubstring(this.template)
   }
 
+  public format(payload: BasePayload): string {
+    const keywords = this.getKeywords()
+    let formattedString = TemplateString.removeKeywordModifyer(this.template)
+    keywords.forEach(keyword => {
+      const value = TemplateString.getValueOfKeyword(
+        keyword as keyof AvailableTemplateKeyword,
+        payload as MemberJoinVoiceChannelPayload | MessageCreatePayload | MemberSpeakPayload
+      )
+      formattedString = formattedString.replace(`{${keyword}}`, value)
+    })
+    const toBeDeletedSubstring = this.getToBeDeletedSubstring()
+    toBeDeletedSubstring.forEach(substring => {
+      formattedString = formattedString.replace(substring, "")
+    })
+    return formattedString
+  }
+
   static getToBeDeletedSubstring(template: string): string[] {
     const regex = /{([A-Z_]+):<(.*)[\r\n]?>}/g
     const keywords = template.match(regex) || []
@@ -46,6 +63,37 @@ class TemplateString {
       toBeDeleted.push(mod[0])
     })
     return toBeDeleted.map(m => m.slice(2, m.length - 1))
+  }
+
+  static getValueOfKeyword<T extends keyof AvailableTemplateKeyword>(
+    keyword: T,
+    payload: AvailableTemplateKeyword[T]
+  ): string {
+    switch (keyword) {
+      case "SOURCE_MEMBER_VC_ID":
+        return (payload as MemberJoinVoiceChannelPayload).sourceMember.voice.channelId || ""
+      case "SOURCE_MESSAGE_TC_ID":
+        return (payload as MessageCreatePayload).textChannelId
+      case "SOURCE_MEMBER_USERNAME":
+        return payload.sourceMember.user.username
+      case "SOURCE_MEMBER_NAME":
+        return payload.sourceMember.displayName
+      case "SOURCE_MESSAGE_CONTENT":
+        return (payload as MessageCreatePayload).message.content
+      case "SOURCE_MEMBER_ID":
+        return payload.sourceMember.user.id
+      case "SOURCE_SPEECH_CONTENT":
+        return (payload as MemberSpeakPayload).speech
+      case "SOURCE_MEMBER_VC_NAME":
+        return payload.sourceMember.voice.channel?.name || ""
+      case "SOURCE_MESSAGE_TC_NAME": {
+        const messagePayload = payload as MessageCreatePayload
+        const channel = messagePayload.sourceMember.guild.channels.cache.get(messagePayload.textChannelId)
+        return channel?.name || ""
+      }
+      default:
+        return ""
+    }
   }
 
   static verifyTemplate(template: string): boolean {

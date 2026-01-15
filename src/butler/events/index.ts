@@ -1,5 +1,5 @@
-import { BaseEvent } from "./baseEvent";
+import type { BaseEvent } from "./baseEvent";
 import { AvailableEvents } from "./availableEvents";
 
-
-export { BaseEvent, AvailableEvents }
+export type { BaseEvent }
+export { AvailableEvents }

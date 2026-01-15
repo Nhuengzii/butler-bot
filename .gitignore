@@ -130,3 +130,5 @@ dist
 .pnp.*
 api/venv
 api/**/__pycache__
+
+data/*.sqlite*
